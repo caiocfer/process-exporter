@@ -13,6 +13,7 @@ import (
 // exercised against in-memory mock filesystems in tests.
 type ProcReader interface {
 	ReadFile(name string) ([]byte, error)
+	ReadDir(name string) ([]fs.DirEntry, error)
 }
 
 // OSProcReader reads directly from the host filesystem.
@@ -21,6 +22,11 @@ type OSProcReader struct{}
 // ReadFile implements ProcReader using the real filesystem.
 func (OSProcReader) ReadFile(name string) ([]byte, error) {
 	return os.ReadFile(name)
+}
+
+// ReadDir implements ProcReader using the real filesystem.
+func (OSProcReader) ReadDir(name string) ([]fs.DirEntry, error) {
+	return os.ReadDir(name)
 }
 
 type mapFSReader struct {
@@ -32,6 +38,11 @@ type mapFSReader struct {
 // is stripped before delegating to the underlying filesystem.
 func (m mapFSReader) ReadFile(name string) ([]byte, error) {
 	return fs.ReadFile(m.fs, strings.TrimPrefix(name, "/"))
+}
+
+// ReadDir implements ProcReader against an fs.FS implementation.
+func (m mapFSReader) ReadDir(name string) ([]fs.DirEntry, error) {
+	return fs.ReadDir(m.fs, strings.TrimPrefix(name, "/"))
 }
 
 // NewMapFSReader builds a ProcReader from a map of fake /proc files.
