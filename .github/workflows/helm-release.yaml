@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Helm
-        uses: helm/helm-action@v2
+        uses: azure/setup-helm@v4
 
       - name: Configure git identity
         run: |
