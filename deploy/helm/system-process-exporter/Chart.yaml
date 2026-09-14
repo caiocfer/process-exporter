@@ -1,0 +1,14 @@
+apiVersion: v2
+name: system-process-exporter
+description: A Helm chart for the System Process Exporter DaemonSet
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - exporter
+  - metrics
+  - prometheus
+  - proc
+home: https://github.com/caiocfer/process-exporter
+sources:
+  - https://github.com/caiocfer/process-exporter

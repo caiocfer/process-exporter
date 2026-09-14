@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-system-process-exporter
+  labels:
+    app.kubernetes.io/name: system-process-exporter
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- range $key, $value := .Values.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: system-process-exporter
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: system-process-exporter
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- range $key, $value := .Values.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: {{ .Values.path | quote }}
+        prometheus.io/port: {{ .Values.service.port | quote }}
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+      hostPID: true
+      serviceAccountName: {{ .Values.serviceAccount.name | default (printf "%s-serviceaccount" .Release.Name) }}
+      containers:
+        - name: system-process-exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --addr={{ .Values.addr }}
+            - --path={{ .Values.path }}
+            - --cache-ttl={{ .Values.cacheTtl }}
+            - --proc={{ .Values.proc }}
+            - --proc-min-rss-mb={{ .Values.procMinRSSMB }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.service.port }}
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc

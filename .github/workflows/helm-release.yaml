@@ -1,0 +1,33 @@
+name: Helm Release
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  helm-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: helm/helm-action@v2
+
+      - name: Configure git identity
+        run: |
+          git config user.name "${{ secrets.GITHUB_USERNAME }}"
+          git config user.email "${{ secrets.GITHUB_USERNAME }}@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        with:
+          charts_dir: deploy/helm
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

@@ -1,0 +1,30 @@
+# Default values for system-process-exporter.
+image:
+  repository: ghcr.io/caiocfer/process-exporter
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Number of replicas. Kept as a value for compatibility; a DaemonSet
+# schedules one pod per node regardless.
+replicas: 1
+
+# CLI flags forwarded to the exporter container.
+addr: ":9835"
+path: /metrics
+cacheTtl: 60s
+proc: /proc
+procMinRSSMB: 10
+
+service:
+  type: ClusterIP
+  port: 9835
+
+serviceAccount:
+  create: true
+  name: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+
+labels: {}
