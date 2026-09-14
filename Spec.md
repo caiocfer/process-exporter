@@ -12,9 +12,9 @@
 ### Story 1: Project Setup & Foundation
 **Goal:** Initialize project structure, Go module, and agent guidelines.
 
-- [ ] Create folder structure: `cmd/exporter/`, `pkg/procfs/`, `pkg/collector/`, `deploy/helm/system-process-exporter/`.
-- [ ] Initialize Go module (`go.mod`) with Go 1.26+ and `github.com/prometheus/client_golang`.
-- [ ] Verify `AGENT.md` and `SDD.md` are loaded in workspace context.
+- [x] Create folder structure: `cmd/exporter/`, `pkg/procfs/`, `pkg/collector/`, `deploy/helm/system-process-exporter/`.
+- [x] Initialize Go module (`go.mod`) with Go 1.26+ and `github.com/prometheus/client_golang`.
+- [x] Verify `AGENT.md` and `SDD.md` are loaded in workspace context.
 
 **Validation Command:**
 ```bash
@@ -28,11 +28,11 @@ go mod tidy && go vet ./...
 
 **Goal:** Abstract `/proc` reading and implement parsers using TDD.
 
-* [ ] Create `ProcReader` interface in `pkg/procfs/reader.go`.
-* [ ] Create test mock using `fstest.MapFS` in `pkg/procfs/reader_test.go` with fake `/proc/<pid>/stat`, `/status`, and `/io` files.
-* [ ] Implement `ParseStat` (utime, stime, state, processor/cpu_id).
-* [ ] Implement `ParseStatus` (VmRSS, VmSize, threads).
-* [ ] Implement `ParseIO` (read_bytes, write_bytes).
+* [x] Create `ProcReader` interface in `pkg/procfs/reader.go`.
+* [x] Create test mock using `fstest.MapFS` in `pkg/procfs/reader_test.go` with fake `/proc/<pid>/stat`, `/status`, and `/io` files.
+* [x] Implement `ParseStat` (utime, stime, state, processor/cpu_id).
+* [x] Implement `ParseStatus` (VmRSS, VmSize, threads).
+* [x] Implement `ParseIO` (read_bytes, write_bytes).
 
 **Validation Command:**
 
@@ -47,10 +47,10 @@ go test -v -race ./pkg/procfs/...
 
 **Goal:** Implement the Prometheus `Collector` interface with caching and RSS filter.
 
-* [ ] Create `ProcessCollector` in `pkg/collector/process.go` satisfying `prometheus.Collector`.
-* [ ] Implement metadata TTL cache (`--cache-ttl`) for stable process labels (`cmdline`, `process_name`).
-* [ ] Implement RSS threshold filtering (`--proc-min-rss-mb`).
-* [ ] Write unit tests verifying generated OpenMetrics output matching Section 5 of `SDD.md`.
+* [x] Create `ProcessCollector` in `pkg/collector/process.go` satisfying `prometheus.Collector`.
+* [x] Implement metadata TTL cache (`--cache-ttl`) for stable process labels (`cmdline`, `process_name`).
+* [x] Implement RSS threshold filtering (`--proc-min-rss-mb`).
+* [x] Write unit tests verifying generated OpenMetrics output matching Section 5 of `SDD.md`.
 
 **Validation Command:**
 
@@ -65,9 +65,9 @@ go test -v -race ./pkg/collector/...
 
 **Goal:** Expose `/metrics` HTTP endpoint and validate containerized execution.
 
-* [ ] Implement `cmd/exporter/main.go` parsing CLI flags defined in `SDD.md` (`--addr`, `--path`, `--proc`, `--proc-min-rss-mb`).
-* [ ] Create multi-stage `Dockerfile` (`golang:1.26-bookworm` -> `distroless/cc-debian12`).
-* [ ] Test local binary execution and `/metrics` curl scrape.
+* [x] Implement `cmd/exporter/main.go` parsing CLI flags defined in `SDD.md` (`--addr`, `--path`, `--proc`, `--proc-min-rss-mb`).
+* [x] Create multi-stage `Dockerfile` (`golang:1.26-bookworm` -> `distroless/cc-debian12`).
+* [x] Test local binary execution and `/metrics` curl scrape.
 
 **Validation Command:**
 
@@ -87,8 +87,8 @@ docker stop test-exporter
 
 **Goal:** Create DaemonSet manifests and GitHub Actions release workflow.
 
-* [ ] Create Helm chart at `deploy/helm/system-process-exporter/` (`Chart.yaml`, `values.yaml`, `daemonset.yaml` with `hostPID: true`).
-* [ ] Create `.github/workflows/helm-release.yaml` using `chart-releaser-action` targeting `gh-pages` branch.
+* [x] Create Helm chart at `deploy/helm/system-process-exporter/` (`Chart.yaml`, `values.yaml`, `daemonset.yaml` with `hostPID: true`).
+* [x] Create `.github/workflows/helm-release.yaml` using `chart-releaser-action` targeting `gh-pages` branch.
 
 **Validation Command:**
 
