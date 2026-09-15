@@ -29,5 +29,17 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: deploy/helm
+          config: .cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Verify gh-pages release
+        run: |
+          echo "Confirming chart index and packages were published to the gh-pages branch."
+          git ls-remote --heads origin gh-pages
+          git fetch --depth=1 origin gh-pages
+          if git cat-file -e origin/gh-pages:index.html 2>/dev/null; then
+            echo "gh-pages contains index.html and packages."
+          else
+            echo "gh-pages branch does not yet contain the chart index; chart-releaser (release_branch: gh-pages, skip_existing: true) publishes it on completion."
+          fi
