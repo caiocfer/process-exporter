@@ -25,7 +25,7 @@ jobs:
           git config user.name "${{ secrets.GITHUB_USERNAME }}"
           git config user.email "${{ secrets.GITHUB_USERNAME }}@users.noreply.github.com"
 
-      - name: Run chart-releaser
+      - name: Create chart releases
         uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: deploy/helm
@@ -33,13 +33,26 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Verify gh-pages release
+      - name: Package and publish chart to gh-pages
+        if: always()
         run: |
-          echo "Confirming chart index and packages were published to the gh-pages branch."
-          git ls-remote --heads origin gh-pages
-          git fetch --depth=1 origin gh-pages
-          if git cat-file -e origin/gh-pages:index.html 2>/dev/null; then
-            echo "gh-pages contains index.html and packages."
+          set -euo pipefail
+          URL="https://caiocfer.github.io/process-exporter"
+          PKG_DIR=.cr-release-packages
+          
+          git fetch origin gh-pages
+          git checkout -B gh-pages origin/gh-pages
+          
+          helm package deploy/helm/system-process-exporter --destination "$PKG_DIR"
+          
+          if [ -f index.yaml ]; then
+            helm repo index "$PKG_DIR" --url "$URL" --merge index.yaml
           else
-            echo "gh-pages branch does not yet contain the chart index; chart-releaser (release_branch: gh-pages, skip_existing: true) publishes it on completion."
+            helm repo index "$PKG_DIR" --url "$URL"
+            mv "$PKG_DIR/index.yaml" index.yaml
           fi
+          
+          cp "$PKG_DIR"/*.tgz .
+          git add index.yaml *.tgz
+          git commit -m "Add system-process-exporter chart" || true
+          git push origin gh-pages
