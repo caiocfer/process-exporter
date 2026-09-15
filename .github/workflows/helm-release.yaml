@@ -22,37 +22,13 @@ jobs:
 
       - name: Configure git identity
         run: |
-          git config user.name "${{ secrets.GITHUB_USERNAME }}"
-          git config user.email "${{ secrets.GITHUB_USERNAME }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      - name: Create chart releases
+      - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: deploy/helm
-          config: .cr.yaml
+          skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Package and publish chart to gh-pages
-        if: always()
-        run: |
-          set -euo pipefail
-          URL="https://caiocfer.github.io/process-exporter"
-          PKG_DIR=.cr-release-packages
-          
-          git fetch origin gh-pages
-          git checkout -B gh-pages origin/gh-pages
-          
-          helm package deploy/helm/system-process-exporter --destination "$PKG_DIR"
-          
-          if [ -f index.yaml ]; then
-            helm repo index "$PKG_DIR" --url "$URL" --merge index.yaml
-          else
-            helm repo index "$PKG_DIR" --url "$URL"
-            mv "$PKG_DIR/index.yaml" index.yaml
-          fi
-          
-          cp "$PKG_DIR"/*.tgz .
-          git add index.yaml *.tgz
-          git commit -m "Add system-process-exporter chart" || true
-          git push origin gh-pages
