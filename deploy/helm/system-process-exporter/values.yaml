@@ -1,6 +1,6 @@
 # Default values for system-process-exporter.
 image:
-  repository: ghcr.io/caiocfer/process-exporter
+  repository: caiocfer/process-exporter
   tag: latest
   pullPolicy: IfNotPresent
 
