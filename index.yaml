@@ -3,6 +3,24 @@ entries:
   system-process-exporter:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2026-09-15T05:33:38.008910095Z"
+    description: A Helm chart for the System Process Exporter DaemonSet
+    digest: 33b47c306029fe9a1323eac9ae2b81c2a9a265a618b27bdebf7444c6a94aca47
+    home: https://github.com/caiocfer/process-exporter
+    keywords:
+    - exporter
+    - metrics
+    - prometheus
+    - proc
+    name: system-process-exporter
+    sources:
+    - https://github.com/caiocfer/process-exporter
+    type: application
+    urls:
+    - https://github.com/caiocfer/process-exporter/releases/download/system-process-exporter-0.1.2/system-process-exporter-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2026-09-15T05:26:39.972703305Z"
     description: A Helm chart for the System Process Exporter DaemonSet
     digest: ed1d894670fee763cd19681296e23a4ac75aeedc839a5eb65052668da5507cb4
@@ -19,4 +37,4 @@ entries:
     urls:
     - https://github.com/caiocfer/process-exporter/releases/download/system-process-exporter-0.1.1/system-process-exporter-0.1.1.tgz
     version: 0.1.1
-generated: "2026-09-15T05:26:39.972713704Z"
+generated: "2026-09-15T05:33:38.008941774Z"
